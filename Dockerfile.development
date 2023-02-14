@@ -1,0 +1,40 @@
+FROM ruby:3.2.0-slim
+
+RUN apt-get update -yq \
+  && apt-get upgrade -yq \
+  #ESSENTIALS
+  && apt-get install -y -qq --no-install-recommends build-essential curl git-core vim passwd unzip cron gcc wget netcat \
+  # RAILS PACKAGES NEEDED
+  && apt-get update \
+  && apt-get install -y --no-install-recommends libpq-dev postgresql-client imagemagick libvips42 \
+  # INSTALL NODE
+  && curl -sL https://deb.nodesource.com/setup_18.x | bash - \
+  && apt-get install -y --no-install-recommends nodejs \
+  # INSTALL YARN
+  && npm install -g yarn
+
+# Clean cache and temp files, fix permissions
+RUN apt-get clean -qy \
+  && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+RUN mkdir /app
+WORKDIR /app
+
+RUN gem install bundler -v 2.4.1
+
+ENV LANG=C.UTF-8 \
+  BUNDLE_GEMFILE=/app/Gemfile \
+  BUNDLE_JOBS=20 \
+  BUNDLE_RETRY=3 \
+  BUNDLE_PATH=/bundle \
+  BUNDLE_BIN=/bundle/bin \
+  BUNDLE_GITHUB__COM="${GITHUB_TOKEN}:x-oauth-basic" \
+  GEM_HOME=/bundle
+  
+ENV PATH="${BUNDLE_BIN}:${PATH}"
+
+COPY Gemfile Gemfile.lock ./
+RUN bundle install
+
+EXPOSE 3000
+CMD ["bundle", "exec", "rails", "s", "-b", "0.0.0.0"]

@@ -1,0 +1,36 @@
+# PostgreSQL. Versions 9.3 and up are supported.
+#
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  timeout: 5000
+
+development:
+  <<: *default
+  database: kingsmen_development
+#  username: postgres
+  username: <%= ENV.fetch('DB_USERNAME') %>
+  password: <%= ENV.fetch('DB_PASSWORD') %>
+  host: <%= ENV.fetch('DB_HOST') %>
+
+  # Minimum log levels, in increasing order:
+  #   debug5, debug4, debug3, debug2, debug1,
+  #   log, notice, warning, error, fatal, and panic
+  # Defaults to warning.
+  #min_messages: notice
+
+test:
+  <<: *default
+  database: kingsmen_test
+#  username: postgres
+  username: <%= ENV.fetch('DB_USERNAME') %>
+  password: <%= ENV.fetch('DB_PASSWORD') %>
+  host: <%= ENV.fetch('DB_HOST') %>
+ 
+production:
+  <<: *default
+  database: kingsmen_production
+  host: <%= ENV.fetch('DB_HOST') %>
+  username: turbochat
+  password: <%= ENV["TURBOCHAT_DATABASE_PASSWORD"] %>

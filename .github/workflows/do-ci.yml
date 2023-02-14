@@ -7,7 +7,7 @@
 name: "DO master CI"
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "main" ]
 
 jobs: 
   build:

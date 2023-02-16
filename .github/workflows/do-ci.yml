@@ -11,13 +11,11 @@ on:
 
 jobs: 
   build:
-   
     runs-on: ubuntu-latest
    
     steps:
       - name: Checkout files    
         uses: actions/checkout@v3
-
       - name: Build and push Docker images
         uses: docker/build-push-action@v1
         with:
@@ -29,16 +27,13 @@ jobs:
         
   deploy:
     needs: build
-    
     runs-on: ubuntu-latest
     
     steps:
       - name: Checkout files    
         uses: actions/checkout@v3
-        
       - name: Get tag name
         uses: olegtarasov/get-tag@v2
-        
       - name: Install doctl
         uses: digitalocean/action-doctl@v2
         with:

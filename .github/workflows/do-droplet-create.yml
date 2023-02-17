@@ -1,0 +1,52 @@
+# This workflow uses actions that are not certified by GitHub.  They are
+# provided by a third-party and are governed by separate terms of service,
+# privacy policy, and support documentation.
+#
+# This workflow will install a prebuilt Ruby version, install dependencies, and
+# run tests and linters.
+name: "DO master CI"
+on:
+  push:
+    branches: [ "main" ]
+
+jobs: 
+  build:
+    runs-on: ubuntu-latest
+   
+    steps:
+      - name: Checkout files    
+        uses: actions/checkout@v3
+      - name: Build and push Docker images
+        uses: docker/build-push-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+          repository: mvkaran/openmct
+          tag_with_ref: true
+          tag_with_sha: true
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout files    
+        uses: actions/checkout@v3
+      - name: Get tag name
+        uses: olegtarasov/get-tag@v2
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+         token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+         
+      - name: Provision Droplet and deploy container
+        id: droplet
+        run: >-
+          echo "::set-output name=DROPLET_ID::$(
+            doctl compute droplet create "$GIT_TAG_NAME" --image docker-22-04 --size s-1vcpu-1gb --region nyc3 --user-data-file deploy.sh --wait --no-header --format=ID
+          )"     
+      - name: Assign Droplet to Project
+        run: doctl projects resources assign ${PROJECT_ID} --resource=do:droplet:"${{ steps.droplet.outputs.DROPLET_ID }}"
+
+      - name: Rails Compile Assets
+        run: ...

@@ -37,11 +37,10 @@ jobs:
       - name: Testing El Oso Mariachi Repo Name
         run: echo "MariachiBear - ${{ steps.repoName.outputs.repository-name }}"
 
-
-#      - name: Install doctl
-#        uses: digitalocean/action-doctl@v2
-#        with:
-#          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
          
 #      - name: Provision Droplet and deploy container
 #        id: droplet

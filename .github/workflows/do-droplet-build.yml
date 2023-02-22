@@ -25,10 +25,10 @@ jobs:
         run: echo "Tarasov - ${{ steps.tagName.outputs.tag }}"
 
       - name: Print GitHub Repo Name
-        run: echo "Repo - $GITHUB.REPOSITORY"
+        run: echo "Repo - ${{ github.repository }}"
 
       - name: Print GitHub Owner
-        run: echo "Owner - $GITHUB.REPOSITORY_OWNER"
+        run: echo "Owner - ${{ GITHUB.REPOSITORY_OWNER }}"
 
 
       - name: Get repo name

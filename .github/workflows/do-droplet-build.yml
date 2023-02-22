@@ -17,13 +17,6 @@ jobs:
       - name: Checkout files    
         uses: actions/checkout@v3
 
-      - name: Get tag name
-        id: tagName
-        uses: olegtarasov/get-tag@v2
-
-      - name: Testing Oleg Tarasov Tag
-        run: echo "Tarasov - ${{ steps.tagName.outputs.tag }}"
-
       - name: Print GitHub Repo Name
         run: echo "Repo - ${{ github.repository }}"
 
@@ -45,9 +38,10 @@ jobs:
 #      - name: Provision Droplet and deploy container
 #        id: droplet
 #        run: >-
-#          echo "::set-output name=DROPLET_ID::$(
+#          echo "DROPLET_ID = $(
 #            doctl compute droplet create "${{ steps.repoName.outputs.repository-name }}" --image docker-22-04 --size s-1vcpu-1gb --region nyc3 --user-data-file --wait --no-header --format=ID
-#          )"
+#          )" >> $GITHUB_OUTPUT
+
 
 #      - name: Assign Droplet to Project
 #        run: doctl projects resources assign ${PROJECT_ID} --resource=do:droplet:"${{ steps.droplet.outputs.DROPLET_ID }}"

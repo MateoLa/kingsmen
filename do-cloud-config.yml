@@ -1,0 +1,71 @@
+### Cloud Config for DO Droplet
+#
+# Add this script as user-data metadata. It will run on droplet creation 
+
+users:
+  - name: mateo
+    ssh-authorized-keys:
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDDGn+TCu5HKhdbMSWFBCGP2Nh9Hz9USmWhQ4ZdKcwRyqKm/6mnLIr3MBgZwvMJrMRSxaNEBX4PJcmO64RUoovyBcbjjjDLPjPNVHnG5ve2zJMJzYtzMahX6IxQl2S1xEjG4W1CStmCehyu2lhYdILGbm+HBJj4lMLWn5KVNrqiFNSWW7rpFgmKIF7u11qRUVgkzBUOle9aBvi2UkhkaBuABG3OTw3Jv2ROCdZtx/iA4rrwv7dyotLdMZWq4xbc0+LW3gYK0f/HJ/3ZYQywo8qgtSSR48W8682yUtwbVIEyPrl6cNsnaVnPcwiyaEmrynjCFGbVM+7mNa/BpmyIXmnRIVaaOayiZmc4UpjHVTjlU6zw7+p5SP8vY+AlQgk8UkddeoV404ilxbSerTwNvvzGQZpb7Q0wkm5kkm1tfcOqYuJ7ns3Nj3aaoIRioImQ81lBneVv9/i4JGd9WPe13utPHzBLLJTQm4dnvwSvNPor57JXfegyJ5/+S7C4avwdo1h0Lef5MGH6iprod2vQoDovYKyZVnyzu78FzepTDCa9tNGaGWfexQJKILHJpq9jLJoCuG2r4jlmThzm/Df2ede3hxvPT0EIHFvt+cnQkXTM+C+Rl/WT697Eeyb4Ka5IJZL8LIAmQHjHxlQWNFKy6SV5alQNfyAjChccMbSaMEb3BQ== ntdom1\c510268@u1704773
+    sudo: ['ALL=(ALL) NOPASSWD:ALL']
+    groups: sudo
+    shell: /bin/bash
+    lock-passwd: False
+chpasswd:
+  list: |
+    mateo:primera
+  expire: False    
+runcmd:
+  - [ chage, --lastday, 0, 'mateo']    # Force password change on next login
+
+package_update: true
+package_upgrade: false
+packages:
+  - package_1
+  - package_2
+  - [package_3, version_num]
+ca-certs:
+  remove-defaults: true
+  trusted:
+    - |
+      -----BEGIN CERTIFICATE-----
+      your_CA_cert
+      -----END CERTIFICATE-----
+runcmd:
+  - [ sed, -i, -e, 's/here/there/g', some_file]
+  - echo "modified some_file"
+  - [cat, some_file]
+  #!/bin/bash
+
+  apt-get -y update
+  apt-get -y install nginx
+  export HOSTNAME=$(curl -s http://169.254.169.254/metadata/v1/hostname)
+  export PUBLIC_IPV4=$(curl -s http://169.254.169.254/metadata/v1/interfaces/public/0/ipv4/address)
+  echo Droplet: $HOSTNAME, IP Address: $PUBLIC_IPV4 > /var/www/html/index.html
+  - ufw allow OpenSSH
+  - ufw --force enable
+# manage-resolv-conf: true    # Use specific DNS servers
+# resolv_conf:                # Use specific DNS servers
+#  nameservers:
+#    - 'first_nameserver'
+#    - 'second_nameserver'
+#  searchdomains:
+#    - first.domain.com
+#    - second.domain.com
+#  domain: domain.com
+#  options:
+#    option1: value1
+#    option2: value2
+#    option3: value3
+#write_files:
+#  - path: /etc/ssh/text.txt
+#    owner:
+#    permissions:
+#    encoding:
+#    content: |
+#      Here is a line.
+#      Another line is here.
+power_state:
+  timeout: 120
+  delay: "+5"
+  message: Rebooting in five minutes. Please save your work.
+  mode: reboot

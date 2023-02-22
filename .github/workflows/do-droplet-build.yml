@@ -24,7 +24,10 @@ jobs:
         run: echo "Owner - ${{ github.repository_owner }}"
 
       - name: Get Repo Name
-        run: echo "Repo - ${{ github.repository.name }}"
+        run: echo "Repo - ${{ github.repository.repo }}"
+
+      - name: Get Repo Name 2
+        run: echo "Repo - ${{ github.event.repository.name }}"
 
       - name: Get repo name
         id: repoName

@@ -24,17 +24,8 @@ jobs:
         run: echo "Owner - ${{ github.repository_owner }}"
 
       - name: Get Repo Name
-        run: echo "Repo - ${{ github.repository.repo }}"
-
-      - name: Get Repo Name 2
-        run: echo "Repo - ${{ github.event.repository.name }}"
-
-      - name: Get repo name
         id: repoName
-        uses: MariachiBear/get-repo-name-action@v1.1.0
-
-      - name: Testing El Oso Mariachi Repo Name
-        run: echo "MariachiBear - ${{ steps.repoName.outputs.repository-name }}"
+        run: echo "REPO_NAME = ${{ github.event.repository.name }}" >> $GITHUB_OUTPUT
 
       - name: Install doctl
         uses: digitalocean/action-doctl@v2
@@ -45,7 +36,7 @@ jobs:
 #        id: droplet
 #        run: >-
 #          echo "DROPLET_ID = $(
-#            doctl compute droplet create "${{ steps.repoName.outputs.repository-name }}" --image docker-22-04 --size s-1vcpu-1gb --region nyc3 --user-data-file --wait --no-header --format=ID
+#            doctl compute droplet create "${{ github.event.repository.name }}" --image docker-22-04 --size s-1vcpu-1gb --region nyc3 --user-data-file --wait --no-header --format=ID
 #          )" >> $GITHUB_OUTPUT
 
 

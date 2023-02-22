@@ -25,15 +25,18 @@ jobs:
         run: echo "Tarasov - ${{ steps.tagName.outputs.tag }}"
 
       - name: Print GitHub Repo Name
-        run: echo "Repo - ${{ github.repository }}.split("/").pop()"
+        run: echo "Repo - ${{ github.repository }}"
 
       - name: Print GitHub Owner
         run: echo "Owner - ${{ github.repositor_owner }}"
 
-
       - name: Get repo name
         id: repoName
         uses: MariachiBear/get-repo-name-action@v1.1.0
+
+      - name: Testing El Oso Mariachi Repo Name
+        run: echo "Tarasov - ${{ steps.repoName.outputs.repository-name }}"
+
 
 #      - name: Install doctl
 #        uses: digitalocean/action-doctl@v2

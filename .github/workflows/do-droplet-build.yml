@@ -22,13 +22,13 @@ jobs:
         uses: olegtarasov/get-tag@v2
 
       - name: Testing Oleg Tarasov Tag
-        run: echo "Tarasov\: ${{ steps.tagName.outputs.tag }}"
+        run: echo "Tarasov - ${{ steps.tagName.outputs.tag }}"
 
       - name: Print GitHub Repo Name
-        run: echo "Repo\: $GITHUB.REPOSITORY"
+        run: echo "Repo - $GITHUB.REPOSITORY"
 
       - name: Print GitHub Owner
-        run: echo "Owner\: $GITHUB.REPOSITORY_OWNER"
+        run: echo "Owner - $GITHUB.REPOSITORY_OWNER"
 
 
       - name: Get repo name

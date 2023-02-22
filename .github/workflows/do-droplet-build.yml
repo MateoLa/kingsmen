@@ -28,7 +28,7 @@ jobs:
         run: echo "Repo - ${{ github.repository }}"
 
       - name: Print GitHub Owner
-        run: echo "Owner - ${{ GITHUB.REPOSITORY_OWNER }}"
+        run: echo "Owner - ${{ github.repositor_owner }}"
 
 
       - name: Get repo name

@@ -17,11 +17,14 @@ jobs:
       - name: Checkout files    
         uses: actions/checkout@v3
 
-      - name: Print GitHub Repo Name
-        run: echo "Repo - ${{ github.repository }}"
+      - name: Get Owner and Repo Name
+        run: echo "Owner & Repo - ${{ github.repository }}"
 
-      - name: Print GitHub Owner
+      - name: Get Repo Owner
         run: echo "Owner - ${{ github.repository_owner }}"
+
+      - name: Get Repo Name
+        run: echo "Repo - ${{ github.repository.name }}"
 
       - name: Get repo name
         id: repoName

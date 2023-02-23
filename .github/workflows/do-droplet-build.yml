@@ -1,9 +1,6 @@
 # This workflow uses actions that are not certified by GitHub.  They are
 # provided by a third-party and are governed by separate terms of service,
 # privacy policy, and support documentation.
-#
-# use with precaution
-
 name: "DigitalOcean Droplet Build"
 on:
   workflow_dispatch:
@@ -34,12 +31,13 @@ jobs:
          
       - name: Provision Droplet and deploy container
         id: droplet
-        run: >-
-          echo "DROPLET_ID = $(
-            doctl compute droplet create "${{ github.event.repository.name }}" --image docker-22-04 --size s-1vcpu-1gb --region nyc3 --user-data-file do-cloud-config.yml --wait --no-header --format=ID
-          )" >> $GITHUB_OUTPUT
+        run: |
+          Droplet_Id = $(doctl compute droplet create "${{ github.event.repository.name }}" --image docker-20-04 --size s-1vcpu-1gb --region nyc3 --user-data-file do-cloud-config.yml --wait --no-header --format=ID)
+          exit_code = ${PIPESTATUS[0]}
+          echo "DROPLET_ID = ${Droplet_Id}" >> $GITHUB_OUTPUT
+          exit $result_code
 
       - name: Assign Droplet to Project
         env:
           Project_Id: e63b9e3c-091f-4b0c-94c1-a42573dc7706
-        run: doctl projects resources assign ${Project_Id} --resource=do:droplet:"${{ steps.droplet.outputs.DROPLET_ID }}"
+        run: doctl projects resources assign do:project:"${Project_Id}" --resource=do:droplet:"${{ steps.droplet.outputs.DROPLET_ID }}"

@@ -4,8 +4,7 @@
 #
 # use with precaution
 
-
-name: "DO Droplet Build"
+name: "DigitalOcean Droplet Build"
 on:
   workflow_dispatch:
 
@@ -14,14 +13,15 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
+      - name: Droplet Build Summary
+        run: |
+          echo "### DigitalOcean Droplet Build! :rocket:" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line
+          echo "- We're going to build a DO droplet with the same name as our repo using doctl (and the appropriate token)" >> $GITHUB_STEP_SUMMARY
+          echo "- The script do-cloud-config.sh configure a new user, ssh access and the droplet ufw" >> $GITHUB_STEP_SUMMARY
+
       - name: Checkout files    
         uses: actions/checkout@v3
-
-      - name: Get Owner and Repo Name
-        run: echo "Owner & Repo - ${{ github.repository }}"
-
-      - name: Get Repo Owner
-        run: echo "Owner - ${{ github.repository_owner }}"
 
       - name: Get Repo Name
         id: repoName
@@ -32,13 +32,14 @@ jobs:
         with:
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
          
-#      - name: Provision Droplet and deploy container
-#        id: droplet
-#        run: >-
-#          echo "DROPLET_ID = $(
-#            doctl compute droplet create "${{ github.event.repository.name }}" --image docker-22-04 --size s-1vcpu-1gb --region nyc3 --user-data-file --wait --no-header --format=ID
-#          )" >> $GITHUB_OUTPUT
+      - name: Provision Droplet and deploy container
+        id: droplet
+        run: >-
+          echo "DROPLET_ID = $(
+            doctl compute droplet create "${{ github.event.repository.name }}" --image docker-22-04 --size s-1vcpu-1gb --region nyc3 --user-data-file do-cloud-config.yml --wait --no-header --format=ID
+          )" >> $GITHUB_OUTPUT
 
-
-#      - name: Assign Droplet to Project
-#        run: doctl projects resources assign ${PROJECT_ID} --resource=do:droplet:"${{ steps.droplet.outputs.DROPLET_ID }}"
+      - name: Assign Droplet to Project
+        env:
+          Project_Id: e63b9e3c-091f-4b0c-94c1-a42573dc7706
+        run: doctl projects resources assign ${Project_Id} --resource=do:droplet:"${{ steps.droplet.outputs.DROPLET_ID }}"

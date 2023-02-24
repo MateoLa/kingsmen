@@ -32,9 +32,9 @@ jobs:
       - name: Provision Droplet and deploy container
         id: droplet
         run: |
-          Droplet_Id = $(doctl compute droplet create "${{ github.event.repository.name }}" --image docker-20-04 --size s-1vcpu-1gb --region nyc3 --user-data-file do-cloud-config.yml --wait --no-header --format=ID)
+          droplet_id = $(doctl compute droplet create "${{ github.event.repository.name }}" --image docker-20-04 --size s-1vcpu-1gb --region nyc3 --user-data-file do-cloud-config.yml --wait --no-header --format=ID)
           exit_code = ${PIPESTATUS[0]}
-          echo "DROPLET_ID = $Droplet_Id" >> $GITHUB_OUTPUT
+          echo "DROPLET_ID = $droplet_id" >> $GITHUB_OUTPUT
           exit $exit_code
 
       - name: Assign Droplet to Project

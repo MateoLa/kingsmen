@@ -34,10 +34,11 @@ jobs:
         run: |
           Droplet_Id = $(doctl compute droplet create "${{ github.event.repository.name }}" --image docker-20-04 --size s-1vcpu-1gb --region nyc3 --user-data-file do-cloud-config.yml --wait --no-header --format=ID)
           exit_code = ${PIPESTATUS[0]}
-          echo "DROPLET_ID = ${Droplet_Id}" >> $GITHUB_OUTPUT
+          echo "DROPLET_ID = $Droplet_Id" >> $GITHUB_OUTPUT
           exit $result_code
 
       - name: Assign Droplet to Project
+        if: always()
         env:
           Project_Id: e63b9e3c-091f-4b0c-94c1-a42573dc7706
         run: doctl projects resources assign do:project:"${Project_Id}" --resource=do:droplet:"${{ steps.droplet.outputs.DROPLET_ID }}"

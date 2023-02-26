@@ -1,0 +1,77 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+# This workflow will download a prebuilt Ruby version, install dependencies and run tests with Rake
+# For more information see: https://github.com/marketplace/actions/setup-ruby-jruby-and-truffleruby
+
+name: Ruby
+
+on:
+  push:
+    branches: [ main, develop]
+#  pull_request:
+#    branches: [ master, develop]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      redis:
+        image: redis:alpine
+        ports: ["6379:6379"]
+        # Set health checks to wait until redis has started
+        options: >-
+          --entrypoint redis-server
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      postgres:
+        image: postgres:13-alpine
+        env:
+          POSTGRES_DB: spree-multivendor-test        
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+        ports:
+          - 5432:5432
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE: spree-multivendor-test
+      DATABASE_USERNAME: postgres
+      DATABASE_PASSWORD: postgres
+      JOB_REDIS_URL: redis://localhost:6379/1
+#      BUNDLE_GEMFILE: Gemfile
+      BUNDLE_GITHUB__COM: ${{ secrets.ACCESS_TOKEN }}:x-oauth-basic
+    steps:
+      - name: Checkout files
+        uses: actions/checkout@v3
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          #ruby-version: 3.2
+          bundler-cache: true
+      - name: Install ruby dependencies
+        run: bundle install
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+          cache: 'yarn'
+      - name: Install js dependencies
+        run: yarn install --check-files 
+      - name: Run migrations
+        run: RAILS_ENV=test bundle exec rake db:migrate
+      - name: Increasing the amount of inotify watchers
+        run: sudo sysctl fs.inotify.max_user_watches=524288 && sudo sysctl -p
+#      - name: Install gem
+#        run: bundle exec rails g <your-gem>:install
+      - name: Compile packs
+        run: RAILS_ENV=test bundle exec rails webpacker:compile
+      - name: Run tests
+        run: RAILS_ENV=test RUBYOPT="-W0" bundle exec rspec

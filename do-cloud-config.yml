@@ -1,5 +1,5 @@
-### Cloud Config for DigitalOcan Droplet
-# Use this script as DO user-data metadata. It will run on droplet creation 
+# DO cloud-config user-data.
+# "user-data" Metadata run on droplet creation. 
 users:
   - name: mateo
     password: primera
@@ -9,6 +9,8 @@ users:
     sudo: ['ALL=(ALL) NOPASSWD:ALL']
     ssh-authorized-keys:
       - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDDGn+TCu5HKhdbMSWFBCGP2Nh9Hz9USmWhQ4ZdKcwRyqKm/6mnLIr3MBgZwvMJrMRSxaNEBX4PJcmO64RUoovyBcbjjjDLPjPNVHnG5ve2zJMJzYtzMahX6IxQl2S1xEjG4W1CStmCehyu2lhYdILGbm+HBJj4lMLWn5KVNrqiFNSWW7rpFgmKIF7u11qRUVgkzBUOle9aBvi2UkhkaBuABG3OTw3Jv2ROCdZtx/iA4rrwv7dyotLdMZWq4xbc0+LW3gYK0f/HJ/3ZYQywo8qgtSSR48W8682yUtwbVIEyPrl6cNsnaVnPcwiyaEmrynjCFGbVM+7mNa/BpmyIXmnRIVaaOayiZmc4UpjHVTjlU6zw7+p5SP8vY+AlQgk8UkddeoV404ilxbSerTwNvvzGQZpb7Q0wkm5kkm1tfcOqYuJ7ns3Nj3aaoIRioImQ81lBneVv9/i4JGd9WPe13utPHzBLLJTQm4dnvwSvNPor57JXfegyJ5/+S7C4avwdo1h0Lef5MGH6iprod2vQoDovYKyZVnyzu78FzepTDCa9tNGaGWfexQJKILHJpq9jLJoCuG2r4jlmThzm/Df2ede3hxvPT0EIHFvt+cnQkXTM+C+Rl/WT697Eeyb4Ka5IJZL8LIAmQHjHxlQWNFKy6SV5alQNfyAjChccMbSaMEb3BQ== ntdom1\c510268@u1704773
+packages:
+  - nginx
 package_update: true
 runcmd:
 #  - [ sed, -i, -e, 's/here/there/g', some_file]

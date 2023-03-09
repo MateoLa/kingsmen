@@ -2,8 +2,8 @@
 # provided by a third-party and are governed by separate terms of service,
 # privacy policy, and support documentation.
 name: "DigitalOcean Droplet Build"
-on:
-  workflow_dispatch:
+# on:
+#  workflow_dispatch:
 
 jobs: 
   build:

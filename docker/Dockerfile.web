@@ -1,0 +1,15 @@
+FROM nginx:alpine
+LABEL maintainer "Mateo Laiño (mateo.laino@gmail.com)"
+
+ENV TZ America/Montevideo
+
+RUN apk add certbot certbot-nginx tzdata
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+RUN mkdir /etc/letsencrypt
+
+COPY ./docker/nginx/default.conf /etc/nginx/conf.d/default.conf
+COPY ./docker/nginx/certbot-renew /etc/cron.d/certbot-renew
+RUN chmod 0744 /etc/cron.d/certbot-renew
+
+
+CMD ["nginx", "-g", "daemon off;"]

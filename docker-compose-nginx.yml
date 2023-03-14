@@ -1,40 +1,51 @@
-version: '2'
+version: '3.7'
 
 services:
-  nginx-proxy:
-    image: jwilder/nginx-proxy
-    container_name: nginx-proxy
-    restart: always
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    restart: unless-stopped
     ports:
       - "80:80"
       - "443:443"
     volumes:
-      - conf:/etc/nginx/conf.d
-      - vhost:/etc/nginx/vhost.d
-      - html:/usr/share/nginx/html
-      - dhparam:/etc/nginx/dhparam
-      - certs:/etc/nginx/certs:ro
-      - /var/run/docker.sock:/tmp/docker.sock:ro
-    network_mode: bridge
+      - web-root:/var/www/html
+      - ./nginx-conf:/etc/nginx/conf.d
+      - certbot-etc:/etc/letsencrypt
+      - certbot-var:/var/lib/letsencrypt
+      - dhparam:/etc/ssl/certs
+    depends_on:
+      - app
+    networks:
+      - app-network
 
-  letsencrypt:
-    image: jrcs/letsencrypt-nginx-proxy-companion:2.0
-    container_name: nginx-proxy-le
-    restart: always
-    environment:
-      - DEFAULT_EMAIL=you@example.com
-    volumes_from:
-      - nginx-proxy
+  certbot:
+    image: certbot/certbot
+    container_name: certbot
     volumes:
-      - certs:/etc/nginx/certs:rw
-      - acme:/etc/acme.sh
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-    network_mode: bridge
+      - certbot-etc:/etc/letsencrypt
+      - certbot-var:/var/lib/letsencrypt
+      - web-root:/var/www/html
+    depends_on:
+      - nginx
+    command: certonly --webroot --webroot-path=/var/www/html --email mlaino@gmail.com --agree-tos --no-eff-email --force-renewal -d etniapagana.com -d www.etniapagana.com
 
 volumes:
-  conf:
-  vhost:
-  html:
+  certbot-etc:
+  certbot-var:
+  web-root:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/mateo/kingsmen/views/
+      o: bind
   dhparam:
-  certs:
-  acme:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/mateo/kingsmen/dhparam/
+      o: bind
+
+networks:
+  app-network:
+    driver: bridge

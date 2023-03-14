@@ -30,7 +30,7 @@ ENV LANG=C.UTF-8 \
   BUNDLE_BIN=/bundle/bin \
   BUNDLE_GITHUB__COM="${GITHUB_TOKEN}:x-oauth-basic" \
   GEM_HOME=/bundle
-  
+
 ENV PATH="${BUNDLE_BIN}:${PATH}"
 
 COPY Gemfile Gemfile.lock ./

@@ -1,0 +1,17 @@
+FROM nginx:alpine
+LABEL maintainer "Mateo Laiño (mateo.laino@gmail.com)"
+
+RUN apk add certbot certbot-nginx
+RUN mkdir /etc/letsencrypt
+
+COPY ./docker/nginx/nginx.conf /etc/nginx/conf.d/default.conf
+COPY ./docker/nginx/fullchain.pem /etc/letsencrypt/live/etniapagana.com/fullchain.pem
+COPY ./docker/nginx/privkey.pem /etc/letsencrypt/live/etniapagana.com/privkey.pem
+COPY ./docker/certbot/options-ssl-nginx.conf /etc/letsencrypt/
+COPY ./docker/certbot/ssl-dhparams.pem /etc/letsencrypt/
+
+COPY ./docker/certbot/certbot-renew /etc/cron.d/certbot-renew
+RUN chmod 0744 /etc/cron.d/certbot-renew
+
+
+CMD ["nginx", "-g", "daemon off;"]
